@@ -20,14 +20,14 @@ for music in music_list:
     music_id = music.select_one('.info a')['onclick'].split("'")[1]
 
     doc = {
-        'music_title': music_title,
         'music_rank': music_rank,
+        'music_title': music_title,
         'music_singer': music_singer,
         'music_id': music_id
     }
 
-    if music_id != None:
+    if  music_id == None:
         db.music_db.delete_one(doc)
-
-    elif music != None:
+    else:
         db.music_db.insert_one(doc)
+
