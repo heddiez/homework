@@ -19,15 +19,17 @@ for music in music_list:
     music_singer = music.select_one('a.artist.ellipsis').text
     music_id = music.select_one('.info a')['onclick'].split("'")[1]
 
-    doc = {
-        'music_rank': music_rank,
-        'music_title': music_title,
-        'music_singer': music_singer,
-        'music_id': music_id
-    }
+    music = db.music_db.find_one({'music_id': music_id})
 
-    if  music_id == None:
-        db.music_db.delete_one(doc)
-    else:
+    if music is None:
+        doc = {
+            'music_rank': music_rank,
+            'music_title': music_title,
+            'music_singer': music_singer,
+            'music_id': music_id
+        }
+
         db.music_db.insert_one(doc)
+
+        print('insert')
 
