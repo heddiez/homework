@@ -85,8 +85,10 @@
     </style>
 
     <script>
-
         $(document).ready(function () {
+            $("#orderInfoList").html("");
+            showOrders();
+
             $.ajax({
                 type: "GET",
                 url: "https://api.manana.kr/exchange/rate.json",
@@ -96,9 +98,10 @@
                     $('#exchangeDollar').text(nowRate);
                 }
             })
+
         });
 
-        function startOrder() {
+        function postOrder() {
 
             let name = $('#orderName').val();
             let color = $('#orderColor').val();
@@ -128,14 +131,63 @@
                 $('#orderAddress').focus();
                 return;
 
+            } else if (tel === '') {
+                alert('전화번호를 입력해주세요')
+                $('#orderTel').focus();
+                return;
+
             } else if (!tel.match(/^[0-9]{3}-[0-9]{4}-[0-9]{4}/)) {
-                alert('입력 형식이 틀립니다. \n 전화번호는 010-XXXX-XXXX 형태로 입력해주세요.')
+                alert('입력 형식이 틀립니다. \n전화번호는 010-XXXX-XXXX 형태로 입력해주세요.')
                 $('#orderTel').focus();
                 return;
 
             } else {
-                alert('주문이 접수되었습니다:)');
+                alert('주문이 완료되었습니다 :)')
             }
+
+            $.ajax({
+                type: "POST",
+                url: "/order",
+                data: {
+                    'name_give': name,
+                    'color_give': color,
+                    'count_give': count,
+                    'address_give': address,
+                    'tel_give': tel
+                },
+                success: function (response) {
+                    if (response['result'] === success) {
+                        alert(response['msg']);
+                        location.reload();
+                    }
+                }
+            })
+
+        }
+
+        function showOrders() {
+
+            $.ajax({
+                type: 'GET',
+                url: '/order',
+                data: {},
+                success: function (response) {
+                    if (response['result'] === success) {
+                        let data = response['order'];
+                        for (let i = 0; i < data.length; i++) {
+                            let orders = data[i];
+
+                            let name = orders['name'];
+                            let color = orders['color'];
+                            let count = orders['count'];
+                            let address = orders['address'];
+                            let tel = orders['tel'];
+                        }
+
+                    }
+                }
+            })
+
         }
 
         function newOrderRow(name, color, count, address, tel) {
@@ -224,7 +276,8 @@
             <div class="input-group-prepend">
                 <span class="input-group-text" id="inputGroup-sizing-default">주문자 이름</span>
             </div>
-            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="orderName">
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                   id="orderName">
         </div>
 
         <div class="input-group mb-3">
@@ -233,11 +286,11 @@
             </div>
             <select class="custom-select" id="orderColor">
                 <option selected value="">------------------</option>
-                <option value="1">스페이스 그레이</option>
-                <option value="2">실버</option>
-                <option value="3">로즈골드</option>
-                <option value="4">그린</option>
-                <option value="5">스카이블루</option>
+                <option value="스페이스그레이">스페이스 그레이</option>
+                <option value="실버">실버</option>
+                <option value="로즈골드">로즈골드</option>
+                <option value="그린">그린</option>
+                <option value="스카이블루">스카이블루</option>
             </select>
         </div>
 
@@ -253,24 +306,26 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">주소</span>
             </div>
-            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="orderAddress">
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                   id="orderAddress">
         </div>
 
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text">전화번호</span>
             </div>
-            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="orderTel">
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                   id="orderTel">
         </div>
 
     </div>
 
     <div class="button">
-        <button class="btn btn-primary" onclick="startOrder()" type="submit">주문하기</button>
+        <button class="btn btn-primary" onclick="postOrder()" type="submit">주문하기</button>
     </div>
 
     <div class="orderInfo">
-        <table border=".5" width="700">
+        <table border=".5" width="680">
             <thead>
             <tr>
                 <td>이름</td>
