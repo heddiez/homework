@@ -82,6 +82,11 @@
             text-align: center;
         }
 
+        thead {
+            background-color: aliceblue;
+
+        }
+
     </style>
 
     <script>
@@ -141,9 +146,9 @@
                 $('#orderTel').focus();
                 return;
 
-            } else {
-                alert('주문이 완료되었습니다 :)')
-            }
+            } //else {
+            //     alert('주문이 완료되었습니다 :)')
+            // }
 
             $.ajax({
                 type: "POST",
@@ -156,7 +161,7 @@
                     'tel_give': tel
                 },
                 success: function (response) {
-                    if (response['result'] === success) {
+                    if (response['result'] === 'success') {
                         alert(response['msg']);
                         location.reload();
                     }
@@ -172,7 +177,7 @@
                 url: '/order',
                 data: {},
                 success: function (response) {
-                    if (response['result'] === success) {
+                    if (response['result'] === 'success') {
                         let data = response['order'];
                         for (let i = 0; i < data.length; i++) {
                             let orders = data[i];
@@ -182,6 +187,8 @@
                             let count = orders['count'];
                             let address = orders['address'];
                             let tel = orders['tel'];
+
+                            newOrderRow(name, color, count, address, tel);
                         }
 
                     }

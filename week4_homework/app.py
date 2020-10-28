@@ -35,7 +35,7 @@ def save_order():
 
     db.order_list.insert_one(doc)
 
-    return jsonify({'result': 'success'}, {'msg': '정상적으로 등록되었습니다.'})
+    return jsonify({'result': 'success', 'msg': '정상적으로 등록되었습니다.'})
 
 # 주문 목록보기(Read) API
 @app.route('/order', methods=['GET'])
